@@ -9,12 +9,15 @@ public class Main {
         int minInclusive = -2147483648; // minimum (inclusive) value
         int maxExclusive = 2147483647; // maximum (exclusive) value
 
+        // generate random numbers
         SecureRandom secureRandom = new SecureRandom();
         List<Integer> numbers = secureRandom.ints(count, minInclusive, maxExclusive).boxed().toList();
 
+        // initialise variables for recording total time taken
         int total = 0;
         int totalPar = 0;
 
+        // loop for every random number generated
         for (int number : numbers) {
             long startTime = System.nanoTime();
             System.out.println(NumberToWordsConverter.convertNumberToWords(number));
@@ -28,6 +31,7 @@ public class Main {
             totalPar += (int) (endTimePar - startTimePar);
         }
 
+        // output average time
         System.out.println("Average time for basic: " + total / 1000);
         System.out.println("Average time for parallel: " + totalPar / 1000);
     }

@@ -42,6 +42,7 @@ public class NumberToWordsConverter {
 
     // recursive function for 3-digit block
     public static StringBuilder convertBelowThousand(int number, StringBuilder words) {
+        // when number is negative
         if (number < 0) {
             convertBelowThousand(-number,words);
         } else {
