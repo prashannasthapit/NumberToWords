@@ -52,6 +52,5 @@ public class ParallelNumberToWordsConverter {
             this.words.append(word);
         }
     }
-
 }
 
