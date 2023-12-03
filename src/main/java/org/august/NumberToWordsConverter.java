@@ -36,7 +36,6 @@ public class NumberToWordsConverter {
             number /= THOUSAND;
             i++;
         }
-
         return words.toString();
     }
 
@@ -44,7 +43,7 @@ public class NumberToWordsConverter {
     public static StringBuilder convertBelowThousand(int number, StringBuilder words) {
         // when number is negative
         if (number < 0) {
-            convertBelowThousand(-number,words);
+            return convertBelowThousand(-number, words);
         } else {
             if (number < 20) {
                 // appends equivalent value from array
@@ -62,7 +61,6 @@ public class NumberToWordsConverter {
                 convertBelowThousand(number % 100, words);
             }
         }
-
         return words;
     }
 }

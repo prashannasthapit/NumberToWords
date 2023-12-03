@@ -55,7 +55,7 @@ public class ParallelNumberToWordsConverter {
             return words.toString();
         }
 
-        public void setWord(String word) {
+        public synchronized void setWord(String word) {
             this.words.append(word);
         }
     }
