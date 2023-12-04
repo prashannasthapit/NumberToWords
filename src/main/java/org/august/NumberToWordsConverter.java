@@ -30,7 +30,7 @@ public class NumberToWordsConverter {
                     words.insert(0, " ");
                 }
                 // Assembly point for 3-digit blocks
-                words.insert(0, convertBelowThousand((int) (number % THOUSAND), new StringBuilder()) + THOUSANDS_WORDS[i]);
+                words.insert(0, convertBelowThousand((short) (number % THOUSAND), new StringBuilder()) + THOUSANDS_WORDS[i]);
             }
             // removes last three digits
             number /= THOUSAND;
@@ -40,10 +40,10 @@ public class NumberToWordsConverter {
     }
 
     // recursive function for 3-digit block
-    public static StringBuilder convertBelowThousand(int number, StringBuilder words) {
+    public static StringBuilder convertBelowThousand(short number, StringBuilder words) {
         // when number is negative
         if (number < 0) {
-            return convertBelowThousand(-number, words);
+            return convertBelowThousand((short) -number, words);
         } else {
             if (number < 20) {
                 // appends equivalent value from array
@@ -53,12 +53,12 @@ public class NumberToWordsConverter {
                 words.append(TENS_WORDS[number / 10]).append(" ");
                 // recursive call for last digit equivalent value
                 // appends value to same string builder thus change is persisted
-                convertBelowThousand(number % 10, words);
+                convertBelowThousand((short) (number % 10), words);
             } else {
                 // removes last 2 digits from 3-digit string and appends equivalent value in hundreds
                 words.append(NUMBERS_BELOW_20[number / 100]).append(" hundred ");
                 // recursive call for last 2 digits
-                convertBelowThousand(number % 100, words);
+                convertBelowThousand((short) (number % 100), words);
             }
         }
         return words;

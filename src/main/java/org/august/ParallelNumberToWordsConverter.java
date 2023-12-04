@@ -1,7 +1,6 @@
 package org.august;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ParallelNumberToWordsConverter {
     public static String convertNumberToWordsParallel(long num) throws InterruptedException {
@@ -11,38 +10,40 @@ public class ParallelNumberToWordsConverter {
 
         StringBuilder words = new StringBuilder();
         // to store threads
-        List<ConverterThread> threadList = new ArrayList<>();
+        Set<ConverterThread> threadSet = new LinkedHashSet<>();
 
         while (num != 0) {
             // generate threads for every 3-digit block
-            ConverterThread converterThread = new ConverterThread((int) (num % THOUSAND));
+            ConverterThread converterThread = new ConverterThread((short) (num % THOUSAND));
             num /= THOUSAND;
             // store
-            threadList.add(converterThread);
+            threadSet.add(converterThread);
         }
 
         // start all threads
-        for (ConverterThread thread : threadList) {
+        for (ConverterThread thread : threadSet) {
             thread.start();
         }
 
         // wait for all threads to complete
-        for (Thread thread : threadList) {
+        for (ConverterThread thread : threadSet) {
             thread.join();
         }
 
         // assemble all blocks with placeholders
-        for (byte i = 0; i < (byte) (threadList.size()); i++) {
-            words.insert(0, threadList.get(i).getWord() + THOUSANDS_WORDS[i] + " ");
+        int i = 0;
+        for (ConverterThread thread : threadSet) {
+            words.insert(0, thread.getWord() + THOUSANDS_WORDS[i] + " ");
+            i++;
         }
         return words.toString();
     }
 
     private static class ConverterThread extends Thread {
-        private final int num;
+        private final short num;
         private final StringBuilder words = new StringBuilder();
 
-        public ConverterThread(int num) {
+        public ConverterThread(short num) {
             this.num = num;
         }
 
