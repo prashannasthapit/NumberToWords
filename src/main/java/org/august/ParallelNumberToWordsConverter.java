@@ -1,41 +1,51 @@
 package org.august;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ParallelNumberToWordsConverter {
-    private static final String[] THOUSANDS_WORDS = {"", "thousand", "million", "billion", "trillion"};
-    private static final int THOUSAND = 1000;
+    private static final int availableThreads = Runtime.getRuntime().availableProcessors();
+    public static final ExecutorService executor = Executors.newFixedThreadPool(availableThreads);
 
-    public static String convertNumberToWordsParallel(long num) throws InterruptedException {
+    public static String convertNumberToWordsParallel(long num) {
+//        System.out.println(availableThreads);
+        final String[] THOUSANDS_WORDS = {"", "thousand", "million", "billion", "trillion"};
+        final int THOUSAND = 1000;
+
         StringBuilder words = new StringBuilder();
-        int i = 0;
+        List<Future<String>> futures = new ArrayList<>();
 
-        try (ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
-            while (num != 0) {
-                short block = (short) (num % THOUSAND);
-                num /= THOUSAND;
-
-                ConverterThread converterThread = new ConverterThread(block);
-                Future<String> future = executorService.submit(converterThread);
-
-                // Block until the thread completes
-                String blockWords = future.get();
-
-                words.insert(0, blockWords + THOUSANDS_WORDS[i] + " ");
-                i++;
+        int blockIndex = 0;
+        while (num != 0) {
+            try {
+                Future<String> future = executor.submit(new ConverterTask((short) (num % THOUSAND), blockIndex));
+                futures.add(future);
+            } catch (RejectedExecutionException e) {
+                // Handle the exception as needed
+                e.printStackTrace();
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace(); // Handle the exception appropriately later
+            num /= THOUSAND;
+            blockIndex++;
         }
 
-        return words.toString().trim();
+        try {
+            for (Future<String> future : futures) {
+                String result = future.get();
+                words.insert(0, result + THOUSANDS_WORDS[futures.indexOf(future)] + " ");
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            // Handle the exception appropriately
+            e.printStackTrace();
+        }
+
+        return words.toString();
     }
 
-    private record ConverterThread(short num) implements Callable<String> {
+    private record ConverterTask(short num, int blockIndex) implements Callable<String> {
         @Override
         public String call() {
             return NumberToWordsConverter.convertBelowThousand(num, new StringBuilder()).toString();
         }
     }
 }
-

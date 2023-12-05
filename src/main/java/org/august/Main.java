@@ -1,10 +1,10 @@
 package org.august;
 
-import java.util.List;
 import java.security.SecureRandom;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         int count = 1000; // number of random integers generated
         int minInclusive = -2147483648; // minimum (inclusive) value
         int maxExclusive = 2147483647; // maximum (exclusive) value
@@ -18,21 +18,25 @@ public class Main {
         int totalPar = 0;
 
         // loop for every random number generated
-        for (int number : numbers) {
-            long startTime = System.nanoTime();
-            System.out.println(NumberToWordsConverter.convertNumberToWords(number));
-            long endTime = System.nanoTime();
-            total += (int) (endTime - startTime);
+        try {
+            for (int number : numbers) {
+                long startTime = System.nanoTime();
+                System.out.println(NumberToWordsConverter.convertNumberToWords(number));
+                long endTime = System.nanoTime();
+                total += (int) (endTime - startTime);
 
 
-            long startTimePar = System.nanoTime();
-            System.out.println(ParallelNumberToWordsConverter.convertNumberToWordsParallel(number));
-            long endTimePar = System.nanoTime();
-            totalPar += (int) (endTimePar - startTimePar);
+                long startTimePar = System.nanoTime();
+                System.out.println(ParallelNumberToWordsConverter.convertNumberToWordsParallel(number));
+                long endTimePar = System.nanoTime();
+                totalPar += (int) (endTimePar - startTimePar);
+            }
+        } finally {
+            ParallelNumberToWordsConverter.executor.shutdown();
         }
 
         System.out.println();
-        System.out.println("Average time for basic: " + (double) total / 1000);
-        System.out.println("Average time for parallel: " + (double) totalPar / 1000);
+        System.out.println("Average time for basic: " + (double) total / count);
+        System.out.println("Average time for parallel: " + (double) totalPar / count);
     }
 }
