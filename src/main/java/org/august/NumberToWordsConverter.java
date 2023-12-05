@@ -36,31 +36,25 @@ public class NumberToWordsConverter {
             number /= THOUSAND;
             i++;
         }
-        return words.toString();
+        return words.toString().trim();
     }
 
     // recursive function for 3-digit block
     public static StringBuilder convertBelowThousand(short number, StringBuilder words) {
-        // when number is negative
-        if (number < 0) {
-            words.append("minus ");
-            return convertBelowThousand((short) -number, words);
+        if (number < 20) {
+            // appends equivalent value from array
+            words.append(NUMBERS_BELOW_20[number]).append(" ");
+        } else if (number < 100) {
+            // removes last digit of 2-digit string and appends equivalent value for first digit in tens
+            words.append(TENS_WORDS[number / 10]).append(" ");
+            // recursive call for last digit equivalent value
+            // appends value to same string builder thus change is persisted
+            convertBelowThousand((short) (number % 10), words);
         } else {
-            if (number < 20) {
-                // appends equivalent value from array
-                words.append(NUMBERS_BELOW_20[number]).append(" ");
-            } else if (number < 100) {
-                // removes last digit of 2-digit string and appends equivalent value for first digit in tens
-                words.append(TENS_WORDS[number / 10]).append(" ");
-                // recursive call for last digit equivalent value
-                // appends value to same string builder thus change is persisted
-                convertBelowThousand((short) (number % 10), words);
-            } else {
-                // removes last 2 digits from 3-digit string and appends equivalent value in hundreds
-                words.append(NUMBERS_BELOW_20[number / 100]).append(" hundred ");
-                // recursive call for last 2 digits
-                convertBelowThousand((short) (number % 100), words);
-            }
+            // removes last 2 digits from 3-digit string and appends equivalent value in hundreds
+            words.append(NUMBERS_BELOW_20[number / 100]).append(" hundred ");
+            // recursive call for last 2 digits
+            convertBelowThousand((short) (number % 100), words);
         }
         return words;
     }
