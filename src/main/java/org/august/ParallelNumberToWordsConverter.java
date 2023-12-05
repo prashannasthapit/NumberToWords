@@ -1,63 +1,40 @@
 package org.august;
 
-import java.util.*;
+import java.util.concurrent.*;
 
 public class ParallelNumberToWordsConverter {
+    private static final String[] THOUSANDS_WORDS = {"", "thousand", "million", "billion", "trillion"};
+    private static final int THOUSAND = 1000;
+
     public static String convertNumberToWordsParallel(long num) throws InterruptedException {
-        // constants
-        final String[] THOUSANDS_WORDS = {"", "thousand", "million", "billion", "trillion"};
-        final int THOUSAND = 1000;
-
         StringBuilder words = new StringBuilder();
-        // to store threads
-        Set<ConverterThread> threadSet = new LinkedHashSet<>();
-
-        while (num != 0) {
-            // generate threads for every 3-digit block
-            ConverterThread converterThread = new ConverterThread((short) (num % THOUSAND));
-            num /= THOUSAND;
-            // store
-            threadSet.add(converterThread);
-        }
-
-        // start all threads
-        for (ConverterThread thread : threadSet) {
-            thread.start();
-        }
-
-        // wait for all threads to complete
-        for (ConverterThread thread : threadSet) {
-            thread.join();
-        }
-
-        // assemble all blocks with placeholders
         int i = 0;
-        for (ConverterThread thread : threadSet) {
-            words.insert(0, thread.getWord() + THOUSANDS_WORDS[i] + " ");
-            i++;
+
+        try (ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())) {
+            while (num != 0) {
+                short block = (short) (num % THOUSAND);
+                num /= THOUSAND;
+
+                ConverterThread converterThread = new ConverterThread(block);
+                Future<String> future = executorService.submit(converterThread);
+
+                // Block until the thread completes
+                String blockWords = future.get();
+
+                words.insert(0, blockWords + THOUSANDS_WORDS[i] + " ");
+                i++;
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace(); // Handle the exception appropriately later
         }
-        return words.toString();
+
+        return words.toString().trim();
     }
 
-    private static class ConverterThread extends Thread {
-        private final short num;
-        private final StringBuilder words = new StringBuilder();
-
-        public ConverterThread(short num) {
-            this.num = num;
-        }
-
+    private record ConverterThread(short num) implements Callable<String> {
         @Override
-        public void run() {
-            setWord(NumberToWordsConverter.convertBelowThousand(num, new StringBuilder()).toString());
-        }
-
-        public String getWord() {
-            return words.toString();
-        }
-
-        public synchronized void setWord(String word) {
-            this.words.append(word);
+        public String call() {
+            return NumberToWordsConverter.convertBelowThousand(num, new StringBuilder()).toString();
         }
     }
 }

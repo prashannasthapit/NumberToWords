@@ -31,9 +31,8 @@ public class Main {
             totalPar += (int) (endTimePar - startTimePar);
         }
 
-        // output average time
         System.out.println();
-        System.out.println("Average time for basic: " + total / 1000);
-        System.out.println("Average time for parallel: " + totalPar / 1000);
+        System.out.println("Average time for basic: " + (double) total / 1000);
+        System.out.println("Average time for parallel: " + (double) totalPar / 1000);
     }
 }
