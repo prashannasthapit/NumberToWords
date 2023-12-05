@@ -43,6 +43,7 @@ public class NumberToWordsConverter {
     public static StringBuilder convertBelowThousand(short number, StringBuilder words) {
         // when number is negative
         if (number < 0) {
+            words.append("minus ");
             return convertBelowThousand((short) -number, words);
         } else {
             if (number < 20) {
