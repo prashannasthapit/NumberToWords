@@ -1,31 +1,14 @@
 package org.august;
 
-<<<<<<< Updated upstream
 import java.util.List;
-import java.security.SecureRandom;
+//import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         int count = 1000; // number of random integers generated
-        int minInclusive = -2147483648; // minimum (inclusive) value
-        int maxExclusive = 2147483647; // maximum (exclusive) value
-
-        // generate random numbers
-        SecureRandom secureRandom = new SecureRandom();
-        List<Integer> numbers = secureRandom.ints(count, minInclusive, maxExclusive).boxed().toList();
-=======
-//import java.security.SecureRandom;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
-
-public class Main {
-    public static void main(String[] args) {
-        int count = 1000; // number of random integers generated
         List<Integer> numbers = getIntegerList(count);
->>>>>>> Stashed changes
 
         // initialise variables for recording total time taken
         int total = 0;
