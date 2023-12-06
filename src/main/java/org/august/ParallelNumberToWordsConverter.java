@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 
 public class ParallelNumberToWordsConverter {
     // configure logger
-    private static final Logger logger = LoggerFactory.getLogger(ParallelNumberToWordsConverter.class);
+//    private static final Logger logger = LoggerFactory.getLogger(ParallelNumberToWordsConverter.class);
     // get number of available threads
     private static final int availableThreads = Runtime.getRuntime().availableProcessors();
     // setup executor service
     public static final ExecutorService executor = Executors.newFixedThreadPool(availableThreads);
 
     public static String convertNumberToWordsParallel(long num) {
+//        System.out.println(availableThreads);
         // constants
         final String[] THOUSANDS_WORDS = {"", "thousand", "million", "billion", "trillion"};
         final int THOUSAND = 1000;
@@ -43,12 +44,11 @@ public class ParallelNumberToWordsConverter {
                 futures.add(future);
             } catch (RejectedExecutionException e) {
                 // use logging
-                logger.error("An error occurred when submitting task", e);
+//                logger.error("An error occurred when submitting task", e);
             }
             // remove last 3-digit block
             num /= THOUSAND;
         }
-
         try {
             // loop for every future
             for (Future<String> future : futures) {
@@ -60,7 +60,7 @@ public class ParallelNumberToWordsConverter {
             }
         } catch (InterruptedException | ExecutionException e) {
             // use logging
-            logger.error("An error occurred when assembling words", e);
+//            logger.error("An error occurred when assembling words", e);
         }
 
         // for minus

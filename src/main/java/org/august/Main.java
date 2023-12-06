@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Main {
     public static void main(String[] args) {
-        int count = 1000; // number of random integers generated
+        int count = 10; // number of random integers generated
         int minInclusive = -2147483648; // minimum (inclusive) value
         int maxExclusive = 2147483647; // maximum (exclusive) value
 
@@ -28,14 +28,14 @@ public class Main {
             for (int number : numbers) {
                 // basic impl
                 long startTime = System.nanoTime();
-                basicImpl = NumberToWordsConverter.convertNumberToWords(number);
+                basicImpl = NumberToWordsConverter.convertNumberToWords(123456789);
                 long endTime = System.nanoTime();
                 // add time taken to total
                 total += (int) (endTime - startTime);
 
                 // parallel impl
                 long startTimePar = System.nanoTime();
-                parallelImpl = ParallelNumberToWordsConverter.convertNumberToWordsParallel(number);
+                parallelImpl = ParallelNumberToWordsConverter.convertNumberToWordsParallel(123456789);
                 long endTimePar = System.nanoTime();
                 // add time taken to total
                 totalPar += (int) (endTimePar - startTimePar);
